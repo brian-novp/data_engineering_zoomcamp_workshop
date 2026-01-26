@@ -7,6 +7,14 @@
 5. Make sure ports we'll use are not listed.
 6. Go back to the folder that have docker compose yaml we want to spin up.
 7. `docker compose up` and `docker ps` in terminal
-8. `pip install uv`
-9.  `uv add pandas sqlalchemy psycopg2-binary` in terminal (notice there is no `--dev` tag, because it will be used in production/deployment)
-10. `uv add --dev jupyter pgcli` (notice there is `--dev` tag, because it will be used in development only)
+8. (install uv globally)
+```bash 
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+9.  `uv init --python=3.13` so that every script we run using `uv run` will be run in python version 3.13 (different python version from host machine, because `uv run` uses the isolated environment) >> This creates a pyproject.toml file for managing dependencies and a .python-version file.
+10. `uv add pandas pyarrow sqlalchemy psycopg2-binary` in terminal (notice there is no `--dev` tag, because it will be used in production/deployment) >> This adds pandas pyarrow sqlalchemy psycopg2-binary to your pyproject.toml and installs them in the virtual environment (.venv folder).
+11. `uv add --dev jupyter pgcli` (notice there is a `--dev` tag, because it will be used in development only) >> we use jupyter notebook for exploring the data to understand the data and what to do with them. we also use pgcli to interact with our postgres in terminal.
+12. `uv run jupyter notebook` in terminal, copy paste the link to browser to access jupyter notebook
+13. Download and explore the data. Link to notebook.
+14. After finished exploring the data and drafting what we need to do with the data, dockerize the pipeline using custom docker image by writing in Dockerfile.
+15. 
