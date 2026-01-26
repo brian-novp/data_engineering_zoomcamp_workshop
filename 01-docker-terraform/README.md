@@ -17,9 +17,11 @@
 12. `uv add pandas pyarrow sqlalchemy psycopg2-binary` in terminal (notice there is no `--dev` tag, because it will be used in production/deployment) >> This adds pandas pyarrow sqlalchemy psycopg2-binary to your pyproject.toml and installs them in the virtual environment (.venv folder).
 13. `uv add --dev jupyter pgcli` (notice there is a `--dev` tag, because it will be used in development only) >> we use jupyter notebook for exploring the data to understand the data and what to do with them. we also use pgcli to interact with our postgres in terminal.
 14. `uv run jupyter notebook` in terminal, copy paste the link to browser to access jupyter notebook
-15. Download and explore the data. Link to notebook.
-16. After finished exploring the data and drafting what we need to do with the data, dockerize the pipeline using custom docker image by writing in Dockerfile.
-17. 
+15. Download and explore the data by reading Domain Knowledge and Data Dictionary. Link to notebook.
+16. [Domain knowledge of Green Taxi](https://www.nyc.gov/assets/tlc/downloads/pdf/trip_record_user_guide.pdf)
+17. [Data Dictionary of Green Taxi](https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_green.pdf)
+18. After finished exploring the data and drafting what we need to do with the data, dockerize the pipeline using custom docker image by writing in Dockerfile.
+19. 
 
 downloading uv 0.9.26 x86_64-unknown-linux-gnu
 no checksums to verify
