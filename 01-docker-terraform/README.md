@@ -11,7 +11,6 @@
 ```bash 
    curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
-INSERT IMAGE HERE  
 9. restart shell/terminal, confirm uv installation by running `uv --version` and INSERT IMAGE HERE
 10. go to working directory, in this case it is `/pipeline`. 
 11. `uv init --python=3.13` so that every script we run using `uv run` will be run in python version 3.13 (different python version from host machine, because `uv run` uses the isolated environment) >> This creates a pyproject.toml file for managing dependencies and a .python-version file.
