@@ -34,3 +34,10 @@ To add $HOME/.local/bin to your PATH, either restart your shell or run:
 
     source $HOME/.local/bin/env (sh, bash, zsh)
     source $HOME/.local/bin/env.fish (fish)
+
+
+# Lesson Learned
+1. Knowing source file behaviour and target destination behaviour, combined with business domain knowledge is how we can build meaningful data pipeline.
+   - In this case, the sources file are parquet for the green taxi data trip and csv for taxi zone.
+   - CSV is a flat file. It does not contain any metadata
+2. 
