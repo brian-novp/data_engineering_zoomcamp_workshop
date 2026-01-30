@@ -1,6 +1,3 @@
-Steps (local)
-1. `docker compose up` this yaml file to spin up postgre and kestra
-```yaml
 volumes:
   ny_taxi_postgres_data:
     driver: local
@@ -92,6 +89,3 @@ services:
     depends_on:
       kestra_postgres:
         condition: service_started
-```
-4. asdasd
-5. 
