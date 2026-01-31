@@ -67,7 +67,7 @@ services:
             username: kestra
             password: k3str4
         kestra:
-          server:
+          serve
             basicAuth:
               username: "admin@kestra.io" # it must be a valid email address
               password: Admin1234!
