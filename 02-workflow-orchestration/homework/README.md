@@ -1,6 +1,6 @@
 # Question 1
 ## Within the execution for Yellow Taxi data for the year 2020 and month 12: what is the uncompressed file size (i.e. the output file yellow_tripdata_2020-12.csv of the extract task)? 
-    Answer : Check the 01-postgre-scheduled.yaml , make sure before doing backfill execution, task id purge_files is ommited. Save the flow and do backfill execution from the appropriate date by also considering the cron expression inside the Trigger Schedule. After the Flow is finished, go to Execution menu and click the execution of the corresponding flow. go to output tab and click the task_id that has the task, click outputFiles then click the file, you will se the size in MBs at the right side of the UI.
+    Check the 01-postgre-scheduled.yaml , make sure before doing backfill execution, task id purge_files is ommited. Save the flow and do backfill execution from the appropriate date by also considering the cron expression inside the Trigger Schedule. After the Flow is finished, go to Execution menu and click the execution of the corresponding flow. go to output tab and click the task_id that has the task, click outputFiles then click the file, you will se the size in MBs at the right side of the UI.
 
 # Question 2
 ## What is the rendered value of the variable file when the inputs taxi is set to green, year is set to 2020, and month is set to 04 during execution? 
