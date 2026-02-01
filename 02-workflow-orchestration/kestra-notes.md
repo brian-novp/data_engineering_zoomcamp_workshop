@@ -1,97 +1,19 @@
-Steps (local)
-1. `docker compose up` this yaml file to spin up postgre and kestra
-```yaml
-volumes:
-  ny_taxi_postgres_data:
-    driver: local
-  kestra_postgres_data:
-    driver: local
-  kestra_data:
-    driver: local
+# Preparation steps
+1. open wsl2 terminal, `ss -tulpn` to check ports . Make sure ports we use in docker compose are not being used by other services.
+2. if some ports are being use, check whether any docker container running `docker ps`. Kill the container, using `docker stop` or go to the directory that has the docker-compose file corresponds to the containers and `docker compose down`
+3. go to working dir that has docker-compose.yaml file
+4. `docker compose up` the `02/workflow/ochestration/docker-compose.yaml` (no `-d` because we want to read the log)
+5. open browser, go to localhost:8080 (this is the port that kestra use), login using credentials defined inside docker-compose.yaml
 
-services:
-  pgdatabase:
-    image: postgres:18
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: ny_taxi
-    ports:
-      - "5432:5432"
-    volumes:
-      - ny_taxi_postgres_data:/var/lib/postgresql
-    depends_on:
-      kestra:
-        condition: service_started
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=root
-    ports:
-      - "8085:80"
-    depends_on:
-      pgdatabase:
-        condition: service_started
-
-  kestra_postgres:
-    image: postgres:18
-    volumes:
-      - kestra_postgres_data:/var/lib/postgresql
-    environment:
-      POSTGRES_DB: kestra
-      POSTGRES_USER: kestra
-      POSTGRES_PASSWORD: k3str4
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-
-  kestra:
-    image: kestra/kestra:v1.1
-    pull_policy: always
-    # Note that this setup with a root user is intended for development purpose.
-    # Our base image runs without root, but the Docker Compose implementation needs root to access the Docker socket
-    # To run Kestra in a rootless mode in production, see: https://kestra.io/docs/installation/podman-compose
-    user: "root"
-    command: server standalone
-    volumes:
-      - kestra_data:/app/storage
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/kestra-wd:/tmp/kestra-wd
-    environment:
-      KESTRA_CONFIGURATION: |
-        datasources:
-          postgres:
-            url: jdbc:postgresql://kestra_postgres:5432/kestra
-            driverClassName: org.postgresql.Driver
-            username: kestra
-            password: k3str4
-        kestra:
-          server:
-            basicAuth:
-              username: "admin@kestra.io" # it must be a valid email address
-              password: Admin1234!
-          repository:
-            type: postgres
-          storage:
-            type: local
-            local:
-              basePath: "/app/storage"
-          queue:
-            type: postgres
-          tasks:
-            tmpDir:
-              path: /tmp/kestra-wd/tmp
-          url: http://localhost:8080/
-    ports:
-      - "8080:8080"
-      - "8081:8081"
-    depends_on:
-      kestra_postgres:
-        condition: service_started
-```
-4. asdasd
-5. 
+# Data Pipeline local (Postgres)
+1. Open browser, go to localhost:8085 (pgadmin port defined in docker-compose.yaml), login using credentials defined inside docker-compose.yaml
+2. Add new server, name the server, click Connection tab
+3. Populate using values defined inside docker compose file.
+   Host name/address : (insert service name)
+   Port : (insert port defined)
+   Maintenance database: (insert POSTGRES_DB env variable)
+   Username: (insert POSTGRES_USER env variable)
+   Password: (insert POSTGRES_PASSWORD env variable)
+4. click Save, refresh page
+5. In the tree menu on the left side of the screen, click servers, click the server name > database > 
