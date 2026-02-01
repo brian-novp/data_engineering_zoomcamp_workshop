@@ -1,8 +1,9 @@
-id: gcp_scheduled
+id: 04_gcp_scheduled
 namespace: zoomcamp
 description: |
   Best to add a label `backfill:true` from the UI to track executions created via a backfill.
-  CSV data used here comes from: https://github.com/DataTalksClub/nyc-tlc-data/releases
+  CSV data used here comes from: https://github.com/DataTalksClub/nyc-tlc-data/releases.
+  This Flow does not use GCS (ELT style), but ETL style (direct load csv to bigquery), no credit card required.
 
 concurrency:
   limit: 1
