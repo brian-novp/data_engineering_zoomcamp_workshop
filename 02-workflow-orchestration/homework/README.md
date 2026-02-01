@@ -11,7 +11,7 @@ Answer : self explanatory.
 Answer : 
 ```sql
 SELECT COUNT(*)
-FROM <dbname>
+FROM <tablename>
 WHERE EXTRACT(YEAR FROM <timestamp column>) = 2020
 ```
 
@@ -22,7 +22,7 @@ Answer : Using CTE
 with yeartable as (
 SELECT
 EXTRACT(YEAR FROM <timestamp column>) as pickup_year
-FROM <dbname>
+FROM <tablename>
 )
 
 SELECT
@@ -38,7 +38,7 @@ Answer :
 with month_table as (
 SELECT
 EXTRACT(YEAR FROM <timestamp column>) as pickup_month_year
-FROM <dbname>
+FROM <tablename>
 )
 
 SELECT
@@ -51,3 +51,9 @@ WHERE pickup_month_year = '2020-03-01'
 # Question 6
 ## How would you configure the timezone to New York in a Schedule trigger?
 Answer : read kestra schedule plugins [docs](https://kestra.io/plugins/core/trigger/io.kestra.plugin.core.trigger.schedule#properties_timezone-body) 
+
+# Lesson Learned
+1. Before moving the data, make sure to understand the behaviour both from source and destination. In this case the csv files and postgre or BigQuery. I found that some transformation are not needed if we ingest csv to system A or system B. BigQuery does not need help that much because it can infer data type correctly. I tried to transformed some columns when ingesting csvs to postgre, like changing the vendorID from int to str or 
+2. The difference of speed when querying data is true. PostgreSQL without any extension installed needed more than 10 seconds in average to answer all of homework questions. BigQuery complete the tasks less than that.
+3. Auto purging files feature in Kestra help manage storage easier. But this is cumbersome for me because I did this project inside wsl2 which use virtual harddisk (vhdx file). This means if I delete files inside wsl2, it does not auto reclaim my SSD space. I have to reclaim my SSD space manually by using diskpart and compactdisk feature in powershell.
+4. Need to base the data movement from business requirements, so we can do meaningful transformation/data movement.
