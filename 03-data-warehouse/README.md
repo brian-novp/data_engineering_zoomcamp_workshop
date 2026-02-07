@@ -157,7 +157,7 @@ Where is the data stored in the External Table you created?
 ## Question 8 Clustering best practices
 It is best practice in Big Query to always cluster your data:
 - True
-- False
+- False  
 [BigQuery Storage Explained](https://cloud.google.com/blog/topics/developers-practitioners/bigquery-explained-storage-overview)
 
 ## Question 9 Understanding table scans
