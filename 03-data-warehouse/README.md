@@ -1,8 +1,39 @@
 # BigQuery Setup
 
 Create an external table using the Yellow Taxi Trip Records.  
+```sql
+-- Creating an External Table by reading GCS Bucket
+CREATE OR REPLACE EXTERNAL TABLE `your_project.your_dataset.tablenamel`
+OPTIONS (
+  format = 'PARQUET',
+  uris = ['gs://your-bucket-name/yellow_tripdata_2024-*.parquet']
+);
 
-Create a (regular/materialized) table in BQ using the Yellow Taxi Trip Records (do not partition or cluster this table).  
+```
+
+
+Create a (regular/materialized) table in BQ using the Yellow Taxi Trip Records (do not partition or cluster this table). We can do this in two ways:   
+```sql
+-- Creating a Regular Table from an External Table
+CREATE OR REPLACE TABLE `your_project.your_dataset.tablename`
+AS
+SELECT * FROM `your_project.your_dataset.yellow_taxi_external`;
+
+```
+```sql
+-- Directly loading data from GCS into a regular BigQuery table without creating an external table 
+CREATE OR REPLACE TABLE `your_project.your_dataset.yellow_taxi_table`
+OPTIONS (
+  format = 'PARQUET'
+) AS
+SELECT * FROM `your_project.your_dataset.external_table_placeholder`
+FROM EXTERNAL_QUERY(
+  'your_project.region-us.gcs_external',
+  'SELECT * FROM `gs://your-bucket-name/yellow_tripdata_2024-*.parquet`'
+);
+
+```
+
 
 ## Question 1 Counting Records
 What is count of records for the 2024 Yellow Taxi Data?
