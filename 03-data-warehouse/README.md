@@ -62,12 +62,12 @@ Write a query to count the distinct number of PULocationIDs for the entire datas
 SELECT 
 COUNT(DISTINCT PULocationID)
 FROM <tablename_external>
--- and then see the planned dry run at the right top of the query window, write the size and then run new query
+-- execute the query then see the job information, write the size and then run new query
 
 SELECT 
 COUNT(DISTINCT PULocationID)
 FROM <tablename>
--- and then see the planned dry run at the right top of the query window, compare with the first query
+-- and then see the job information, compare with the first query
 ```
 
 ## Question 3 Understanding columnar storage
