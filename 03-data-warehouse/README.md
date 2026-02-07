@@ -34,7 +34,9 @@ FROM EXTERNAL_QUERY(
 );
 -- FROM EXTERNAL_QUERY is a federated query
 ```
-
+[Federated query](https://docs.cloud.google.com/bigquery/docs/federated-queries-intro)  
+[External data sources](https://docs.cloud.google.com/bigquery/docs/external-data-sources)  
+[Intro to Table](https://docs.cloud.google.com/bigquery/docs/tables-intro#:~:text=Standard%20BigQuery%20tables:%20structured%20data,by%20using%20a%20SQL%20query.)  
 
 ## Question 1 Counting Records
 What is count of records for the 2024 Yellow Taxi Data?
