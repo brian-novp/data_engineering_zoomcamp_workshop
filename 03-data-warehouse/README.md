@@ -55,7 +55,17 @@ Write a query to count the distinct number of PULocationIDs for the entire datas
 - 0 MB for the External Table and 155.12 MB for the Materialized Table
 - 2.14 GB for the External Table and 0MB for the Materialized Table
 - 0 MB for the External Table and 0MB for the Materialized Table
+```sql
+SELECT 
+COUNT(DISTINCT PULocationID)
+FROM <tablename_external>
+-- and then see the planned dry run at the right top of the query window, write the size and then run new query
 
+SELECT 
+COUNT(DISTINCT PULocationID)
+FROM <tablename>
+-- and then see the planned dry run at the right top of the query window, compare with the first query
+```
 
 ## Question 3 Understanding columnar storage
 Write a query to retrieve the PULocationID from the table (not the external table) in BigQuery. Now write a query to retrieve the PULocationID and DOLocationID on the same table.  
@@ -65,6 +75,19 @@ Why are the estimated number of Bytes different?
 - BigQuery duplicates data across multiple storage partitions, so selecting two columns instead of one requires scanning the table twice, doubling the estimated bytes processed.
 - BigQuery automatically caches the first queried column, so adding a second column increases processing time but does not affect the estimated bytes scanned.
 - When selecting multiple columns, BigQuery performs an implicit join operation between them, increasing the estimated bytes processed
+
+```sql
+SELECT 
+COUNT(DISTINCT PULocationID)
+FROM <tablename>
+
+--2nd query
+SELECT 
+COUNT(DISTINCT PULocationID),
+COUNT(DISTINCT DOLocationID)
+FROM <tablename>
+```
+Answer : As a columnar database, BQ only scans the mentioned data inside the query. Adding a column means BQ needs to scan more data compared to scanning a column only.
 
 
  ## Question 4 Counting zero fare trips
@@ -81,8 +104,9 @@ What is the best strategy to make an optimized table in Big Query if your query 
 - Partition by tpep_dropoff_datetime and Cluster on VendorID
 - Cluster on by tpep_dropoff_datetime and Cluster on VendorID
 - Cluster on tpep_dropoff_datetime Partition by VendorID
-- Partition by tpep_dropoff_datetime and Partition by VendorID
+- Partition by tpep_dropoff_datetime and Partition by VendorID  
 
+Answer : as of 2026, BQ partition limitation is increased to 10000 from the former 4000. It is better to ask the data analysts or data scientist first, in which partition style they want. In this time-related column context of tpep_dropoff_datetime : Partitioning in daily or monthly setting can cover approx 27 years of data and 830 years of data respectively, while hourly partitioning can cover 416 days (10000 partition limit).  
 
 ## Question 6 Partition benefits
 Write a query to retrieve the distinct VendorIDs between tpep_dropoff_datetime 2024-03-01 and 2024-03-15 (inclusive). Use the materialized table you created earlier in your from clause and note the estimated bytes. Now change the table in the from clause to the partitioned table you created for question 5 and note the estimated bytes processed. What are these values?
