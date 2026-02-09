@@ -9,10 +9,11 @@
 7. Update profiles.yml by copy paste from [local setup](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/04-analytics-engineering/setup/local_setup.md) , change memory limit to 4GB and threads to 4, for dev and prod
 8. Download and ingest data using [python script](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/04-analytics-engineering/setup/local_setup.md#step-4-download-and-ingest-data)
 9. run the python script (big data size for wsl2 standard, make sure unused docker images pruned and vhdx compacted using diskpart)
-10. add parquet files inside .gitignore so if we push to remote repo, we do not push the big data
-11. in terminal, execute `duckdb -ui` to deploy duckdb ui locally, open in browser, copy the path of .duckdb file
-12. Under 'Attached databases', click the + sign, paste the copied path under 'Path' (we can do this from the cli). Write ny-taxi under 'Alias'
-13. Open new notebook and query the data (prod or dev schema?). If the data displayed correctly, then the local setup is done.
-14. Close the duckdb instance to avoid conflicts.
-15. Test the connection. go to dbt project (created by dbt init), run `dbt debug` in the terminal to test connection to duckdb. We expect 'All checks passed!'
-16. Install dbt power user extension in vscode to make it easier operating dbt locally
+10. add parquet and duckdb files inside .gitignore so if we push to remote repo, we do not push the big data
+11. Install duckdb in terminal `curl https://install.duckdb.org | sh` so wsl2 can initialize duckdb cli.
+12. in terminal, execute `duckdb -ui` to deploy duckdb ui locally, open in browser, copy the path of .duckdb file
+13. Under 'Attached databases', click the + sign, paste the copied path under 'Path' (we can do this from the cli). Write ny-taxi under 'Alias'
+14. Open new notebook and query the data (prod or dev schema?). If the data displayed correctly, then the local setup is done.
+15. Close the duckdb instance to avoid conflicts.
+16. Test the connection. go to dbt project (created by dbt init), run `dbt debug` in the terminal to test connection to duckdb. We expect 'All checks passed!'
+17. Install dbt power user extension in vscode to make it easier operating dbt locally

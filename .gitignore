@@ -31,3 +31,13 @@ profiles.yml
 # OS specific
 .DS_Store
 Thumbs.db
+
+# DuckDB temporary files
+*.wal
+*.tmp/
+
+# The exact extension depends on your configuration (e.g., .duckdb, .db, .ddb)
+# Uncomment or modify the line below to ignore your database files:
+*.duckdb*
+*.db*
+*.ddb*
