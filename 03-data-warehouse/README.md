@@ -1,3 +1,22 @@
+# Data
+In this homework, I worked with NYC Yellow Taxi Trip Records from January 2024 to June 2024.
+
+The data is provided as Parquet files by NYC TLC and is available at:
+https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+
+Only the first six months of 2024 were used for this assignment.
+## Loading the data to GCS
+
+To load the data into Google Cloud Storage, I used: [yellow_taxi_data_gcs.py](https://github.com/brian-novp/data_engineering_zoomcamp_workshop/blob/main/03-data-warehouse/yellow_taxi_data_gcs.py)
+
+This python script performs the following steps:
+
+    Downloads the Parquet files for January–June 2024
+    Creates a GCS bucket if it does not already exist
+    Uploads all six Parquet files to the bucket
+
+Authentication is handled using a Google Cloud Service Account, and the bucket name is configured directly in the script.
+
 # BigQuery Setup
 
 Create an external table using the Yellow Taxi Trip Records.  
@@ -51,19 +70,23 @@ Because we already ingested only the necessary data from January 2024 to June 20
 SELECT COUNT(*)
 FROM <tablename>
 ```
-
+or we can see the details of a table by clicking the table and Details tab
 ## Question 2 Data read estimation
 Write a query to count the distinct number of PULocationIDs for the entire dataset on both the tables. What is the estimated amount of data that will be read when this query is executed on the External Table and the Table?
 - 18.82 MB for the External Table and 47.60 MB for the Materialized Table
 - 0 MB for the External Table and 155.12 MB for the Materialized Table
 - 2.14 GB for the External Table and 0MB for the Materialized Table
 - 0 MB for the External Table and 0MB for the Materialized Table
+
+BigQuery leverages Parquet metadata and query planning optimizations to compute the result without scanning the underlying data files. As a result, the estimated bytes processed for external table is 0 MB.
 ```sql
 SELECT 
 COUNT(DISTINCT PULocationID)
 FROM <tablename_external>
 -- execute the query then see the job information, write the size and then run new query
-
+```
+In materialized table, data is stored in BigQuery, so BQ needs to scan the data required, hence the 155.12 MB
+```sql
 SELECT 
 COUNT(DISTINCT PULocationID)
 FROM <tablename>
@@ -80,17 +103,18 @@ Why are the estimated number of Bytes different?
 - When selecting multiple columns, BigQuery performs an implicit join operation between them, increasing the estimated bytes processed
 
 ```sql
+-- 155.12 MB data scanned
 SELECT 
 COUNT(DISTINCT PULocationID)
 FROM <tablename>
 
---2nd query
+--2nd query 310.24 MB data scanned
 SELECT 
 COUNT(DISTINCT PULocationID),
 COUNT(DISTINCT DOLocationID)
 FROM <tablename>
 ```
-Answer : As a columnar database, BQ only scans the mentioned data inside the query. Adding a column means BQ needs to scan more data compared to scanning a column only.
+Answer : As a columnar database, BQ only scans the mentioned columns inside the query. Adding a column means BQ needs to scan more data compared to scanning a column only.
 
 
  ## Question 4 Counting zero fare trips
@@ -100,7 +124,11 @@ How many records have a fare_amount of 0?
 - 546,578
 - 20,188,016
 - 8,333
-
+```sql
+SELECT COUNT(*) AS zero_fare_trips
+FROM <tablename>
+WHERE fare_amount = 0;
+```
 
 ## Question 5 Partitioning and clustering
 What is the best strategy to make an optimized table in Big Query if your query will always filter based on tpep_dropoff_datetime and order the results by VendorID (Create a new table with this strategy)
@@ -136,14 +164,16 @@ Choose the answer which most closely matches.
 
 ```sql
 -- Write a query to retrieve the distinct VendorIDs between tpep_dropoff_datetime 2024-03-01 and 2024-03-15 (inclusive)
+-- This query scans the entire table because it is not partitioned, even though a date filter is applied. As a result, BigQuery estimates 310.24 MB of data processed.
 SELECT (DISTINCT VendorID)
 FROM <tablename>
-WHERE DATE(tpep_dropoff_datetime) BETWEEEN '2024-03-01' AND '2024-03-15'
+WHERE DATE(tpep_dropoff_datetime) BETWEEEN '2024-03-01' AND '2024-03-16'
 
 -- Now change the table in the from clause to the partitioned table you created for question 5
+-- This table is partitioned by tpep_dropoff_datetime, so BigQuery only scans the partitions that fall within the specified date range. As a result, the estimated data processed is reduced to 26.84 MB.
 SELECT (DISTINCT VendorID)
 FROM <tablename_q5>
-WHERE DATE(tpep_dropoff_datetime) BETWEEEN '2024-03-01' AND '2024-03-15'
+WHERE DATE(tpep_dropoff_datetime) BETWEEEN '2024-03-01' AND '2024-03-16'
 ```
 
 ## Question 7 External table storage
@@ -158,8 +188,19 @@ Where is the data stored in the External Table you created?
 It is best practice in Big Query to always cluster your data:
 - True
 - False  
+Answer : Clustering is not always beneficial and should be applied based on query patterns and data size. This means, ask the stakeholders first before making data warehouse (ask data analyst, data scientist, business users, etc).  
+
+Small tables or workloads that do not frequently filter or aggregate on specific columns, clustering may provide little to no performance improvement and can add unnecessary complexity.
 [BigQuery Storage Explained](https://cloud.google.com/blog/topics/developers-practitioners/bigquery-explained-storage-overview)
 
 ## Question 9 Understanding table scans
 No Points: Write a SELECT count(*) query FROM the materialized table you created. How many bytes does it estimate will be read? Why?
 
+
+Answer : BigQuery dry run estimates 0 bytes processed for this query.  
+
+Why? A COUNT(*) in a BigQuery materialized view (or table derived from Parquet) scans 0 bytes because BigQuery uses metadata stored in the table's footer (specifically row counts in Parquet footer metadata or BigQuery's own snapshot metadata) rather than scanning the actual data. This occurs for fully aggregated materialized views or when the query is served directly from pre-computed query results. (Metadata Optimization)  
+
+Queries that make BQ to scan data (relevant columns) which results in non-zero bytes:
+- DISTINCT
+- filtering conditions (WHERE) or selecting specific columns
