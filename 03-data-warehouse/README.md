@@ -137,10 +137,11 @@ What is the best strategy to make an optimized table in Big Query if your query 
 - Cluster on tpep_dropoff_datetime Partition by VendorID
 - Partition by tpep_dropoff_datetime and Partition by VendorID  
 
-Answer : as of 2026, BQ partition limitation is increased to 10000 from the former 4000. It is better to ask the data analysts or data scientist first, in which partition style they want. In this time-related column context of tpep_dropoff_datetime : Partitioning in daily or monthly setting can cover approx 27 years of data and 830 years of data respectively, while hourly partitioning can cover 416 days (10000 partition limit). In this scenario, the analysis will be based on days, so the DDL query to create the table:
+Answer : as of 2026, BQ partition limitation is increased to 10000 from the former 4000. It is better to ask the data analysts or data scientist first, in which partition style they want. In this time-related column context of tpep_dropoff_datetime : Partitioning in daily or monthly setting can cover approx 27 years of data and 830 years of data respectively, while hourly partitioning can cover 416 days (10000 partition limit). In this scenario, the analysis will be based on days, and analysts use VendorID for analysis, so the DDL query to create the table:
 ```sql
 CREATE OR REPLACE TABLE `your_project.your_dataset.yellow_taxi_table`
 PARTITION BY TIMESTAMP_TRUNC(tpep_dropoff_datetime, DAY)
+CLUSTER BY VendorID
 OPTIONS (
   format = 'PARQUET'
 ) AS
@@ -169,8 +170,8 @@ SELECT (DISTINCT VendorID)
 FROM <tablename>
 WHERE DATE(tpep_dropoff_datetime) BETWEEEN '2024-03-01' AND '2024-03-16'
 
--- Now change the table in the from clause to the partitioned table you created for question 5
--- This table is partitioned by tpep_dropoff_datetime, so BigQuery only scans the partitions that fall within the specified date range. As a result, the estimated data processed is reduced to 26.84 MB.
+-- Now change the table in the from clause to the partitioned table from question 5
+-- This table is partitioned by tpep_dropoff_datetime, so BigQuery only scans the partitions (the segment) within the specified date range. As a result, the estimated data processed is reduced from 310.24 MB to 26.84 MB.
 SELECT (DISTINCT VendorID)
 FROM <tablename_q5>
 WHERE DATE(tpep_dropoff_datetime) BETWEEEN '2024-03-01' AND '2024-03-16'
@@ -188,9 +189,9 @@ Where is the data stored in the External Table you created?
 It is best practice in Big Query to always cluster your data:
 - True
 - False  
-Answer : Clustering is not always beneficial and should be applied based on query patterns and data size. This means, ask the stakeholders first before making data warehouse (ask data analyst, data scientist, business users, etc).  
+Answer : Clustering should be applied based on query patterns and data size. This means, ask the stakeholders first before making data warehouse (ask data analyst, data scientist, business users, etc) and explore the data ourselves.  
 
-Small tables or workloads that do not frequently filter or aggregate on specific columns, clustering may provide little to no performance improvement and can add unnecessary complexity.
+Small tables (< 1GB) or workloads that do not frequently filter or aggregate on specific columns, when clustered, provides little to no performance improvement and can add unnecessary complexity when creating our data warehouse.
 [BigQuery Storage Explained](https://cloud.google.com/blog/topics/developers-practitioners/bigquery-explained-storage-overview)
 
 ## Question 9 Understanding table scans
