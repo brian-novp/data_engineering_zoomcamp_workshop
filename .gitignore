@@ -1,3 +1,33 @@
+
 *.env
 *.parquet
 *.json
+
+# Dbt artifacts
+target/
+dbt_packages/
+logs/
+.dbtignore
+
+# Python virtual environment
+venv/
+.venv/
+ENV/
+env/
+*.pyc
+__pycache__/
+
+# Profiles and credentials
+profiles.yml
+.env
+*.pem
+
+# IDE/Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
