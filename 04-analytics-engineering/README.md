@@ -7,13 +7,22 @@
 5. `code ~/.dbt/profiles.yml` to open yml file in vscode without clicking the file.
 6. Inspect available core or threads allocated in WSL2 by executing `lscpu` or `nproc`. Write down the spec.
 7. Update profiles.yml by copy paste from [local setup](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/04-analytics-engineering/setup/local_setup.md) , change memory limit to 4GB and threads to 4, for dev and prod
-8. Download and ingest data using [python script](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/04-analytics-engineering/setup/local_setup.md#step-4-download-and-ingest-data)
-9. run the python script (big data size for wsl2 standard, make sure unused docker images pruned and vhdx compacted using diskpart)
-10. add parquet and duckdb files inside .gitignore so if we push to remote repo, we do not push the big data
-11. Install duckdb in terminal `curl https://install.duckdb.org | sh` so wsl2 can initialize duckdb cli.
-12. in terminal, execute `duckdb -ui` to deploy duckdb ui locally, open in browser, copy the path of .duckdb file
-13. Under 'Attached databases', click the + sign, paste the copied path under 'Path' (we can do this from the cli). Write ny-taxi under 'Alias'
-14. Open new notebook and query the data (prod or dev schema?). If the data displayed correctly, then the local setup is done.
-15. Close the duckdb instance to avoid conflicts.
-16. Test the connection. go to dbt project (created by dbt init), run `dbt debug` in the terminal to test connection to duckdb. We expect 'All checks passed!'
-17. Install dbt power user extension in vscode to make it easier operating dbt locally
+8. cd to your newly created dbt project folder
+9. Download and ingest data using [python script](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/04-analytics-engineering/setup/local_setup.md#step-4-download-and-ingest-data) (just copy paste them)
+10. run the python script using virtual environment python interpreter (big data size for wsl2 standard, make sure unused docker images pruned and vhdx compacted using diskpart)
+11. add parquet and duckdb files inside .gitignore so if we push to remote repo, we do not push the big data
+12. open new terminal (no venv activated)
+13. Install duckdb in terminal `curl https://install.duckdb.org | sh` so wsl2 can initialize duckdb cli.
+14. go back to virtual env terminal, execute `duckdb -ui` to deploy duckdb ui locally, open in browser, copy the path of .duckdb file
+15. Under 'Attached databases', click the + sign, paste the copied path under 'Path' (we can do this from the cli). Write ny-taxi under 'Alias'
+16. Open new notebook and query the data (prod schema will be shown instead of dev because python script defined it as prod). If the data displayed correctly, then the local setup is done.
+17. Close the duckdb instance to avoid conflicts by keyboard interrupt ctrl+D
+18. Test the connection. go to dbt project (created by dbt init), run `dbt debug` in the terminal to test connection to duckdb. We expect 'All checks passed!'
+19. Install dbt power user extension in vscode to make it easier operating dbt locally
+20. Change python interpreter to the venv by copying the python path from `dbt debug` , not doing this will result in dbt power user extension asking to instal dbt core
+
+
+# dbt project preparation
+1. Create `staging` folder inside `models` , create `sources.yml` . Staging and sources.yml are dbt convention. 
+2. Create an sql file for each taxies (use file naming convention such as `stg_green_tripdata.sql` instead of just `green_tripdata.sql` to show that this sql file is used in staging)
+3. 
