@@ -18,6 +18,7 @@ renamed as (
         cast(store_and_fwd_flag as string) as store_and_fwd_flag,
         cast(passenger_count as integer) as passenger_count,
         cast(trip_distance as numeric) as trip_distance,
+        1 as trip_type, 
 
         -- payment info
         cast(fare_amount as numeric) as fare_amount,
@@ -26,6 +27,7 @@ renamed as (
         cast(tip_amount as numeric) as tip_amount,
         cast(tolls_amount as numeric) as tolls_amount,
         cast(improvement_surcharge as numeric) as improvement_surcharge,
+        0 as ehail_fee,
         cast(total_amount as numeric) as total_amount,
         cast(payment_type as integer) as payment_type
 
@@ -37,6 +39,6 @@ renamed as (
 select * from renamed
 
 -- Sample records for dev environment using deterministic date filter
-{% if target.name == 'dev' %}
-where pickup_datetime >= '2019-01-01' and pickup_datetime < '2019-02-01'
-{% endif %}
+-- {% if target.name == 'dev' %}
+-- where pickup_datetime >= '2019-01-01' and pickup_datetime < '2019-02-01'
+-- {% endif %}

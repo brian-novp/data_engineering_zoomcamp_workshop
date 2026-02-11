@@ -25,4 +25,9 @@
 # dbt project preparation
 1. Create `staging` folder inside `models` , create `sources.yml` . Staging and sources.yml are dbt convention. 
 2. Create an sql file for each taxies (use file naming convention such as `stg_green_tripdata.sql` instead of just `green_tripdata.sql` to show that this sql file is used in staging)
-3. 
+3. Create a `marts` folder, inside it create `reporting` folder
+4. In marts folder, create `dim_vendors.sql`, `dim_locations.sql`, `fct_trips.sql` . As the name convention suggest, there files are for dimension and fact tables.
+5. In `reporting` folder, create `monthly_revenue_per_locations.sql`
+6. Create an `intermediate` folder under `models` folder, this is where we union all taxies data into a single table
+7. Fix the `stg_yellow_tripdata.sql` , ehail fee and trip type column.
+8. In terminal, go to the root dbpt project folder and `dbt run`, we expect Completed Successully message.
