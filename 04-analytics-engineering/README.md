@@ -31,3 +31,6 @@
 6. Create an `intermediate` folder under `models` folder, this is where we union all taxies data into a single table
 7. Fix the `stg_yellow_tripdata.sql` , ehail fee and trip type column.
 8. In terminal, go to the root dbpt project folder and `dbt run`, we expect Completed Successully message.
+9. go to `seeds` folder and download taxi zone lookup csv from module asset using the raw github link in the terminal `curl -O [raw asset github link]`
+10. in the root dbt project folder, `dbt seed`, we expect Completed Successfully message.
+11. go to `dim_locations.sql`, change to `dim_zones.sql`, write the sql that ref the csv inside seeds folder
