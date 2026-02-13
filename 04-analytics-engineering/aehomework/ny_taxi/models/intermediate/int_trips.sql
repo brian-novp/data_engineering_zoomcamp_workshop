@@ -13,7 +13,8 @@ payment_types as (
 cleaned_and_enriched as (
     select
         -- Generate unique trip identifier (surrogate key pattern)
-        {{ dbt_packages.dbt_utils.generate_surrogate_key(['u.vendor_id', 'u.pickup_datetime', 'u.pickup_location_id', 'u.service_type']) }} as trip_id,
+        {{ dbt_utils.generate_surrogate_key([
+            'u.vendor_id', 'u.pickup_datetime', 'u.pickup_location_id', 'u.service_type']) }} as trip_id,
 
         -- Identifiers
         u.vendor_id,
