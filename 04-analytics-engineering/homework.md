@@ -33,7 +33,8 @@ If you run `dbt run --select int_trips_unioned`, what models will be built?
 - Any model with upstream and downstream dependencies to `int_trips_unioned`
 - `int_trips_unioned` only
 - `int_trips_unioned`, `int_trips`, and `fct_trips` (downstream dependencies)
-
+  
+Answer : using --select flag/arg (or -s) without "+" (plus) sign (dbt calls them [graph operator](https://docs.getdbt.com/reference/node-selection/graph-operators)) in before or after the mentioned model, `dbt run` will only execute the mentioned model, no upstream nor downstream dependencies executed. 
 ---
 
 ### Question 2. dbt Tests
@@ -48,7 +49,7 @@ columns:
           arguments:
             values: [1, 2, 3, 4, 5]
             quote: false
-```
+```  
 
 Your model `fct_trips` has been running successfully for months. A new value `6` now appears in the source data.
 
@@ -57,8 +58,9 @@ What happens when you run `dbt test --select fct_trips`?
 - dbt will skip the test because the model didn't change
 - dbt will fail the test, returning a non-zero exit code
 - dbt will pass the test with a warning about the new value
-- dbt will update the configuration to include the new value
+- dbt will update the configuration to include the new value  
 
+Answer : It will fail the test. See [data test docs](https://docs.getdbt.com/docs/build/data-tests). Might want to try `--store-failure` flag for future development.
 ---
 
 ### Question 3. Counting Records in `fct_monthly_zone_revenue`
@@ -70,8 +72,13 @@ What is the count of records in the `fct_monthly_zone_revenue` model?
 - 12,998
 - 14,120
 - 12,184
-- 15,421
-
+- 15,421  
+  
+Answer :
+```sql
+select count(*) as total_rows 
+from ny_taxi.prod.fct_monthly_zone_revenue
+```
 ---
 
 ### Question 4. Best Performing Zone for Green Taxis (2020)
@@ -84,7 +91,18 @@ Which zone had the highest revenue?
 - Morningside Heights
 - East Harlem South
 - Washington Heights South
+  
+Answer:
+```sql
+select
+pickup_zone,
+max(revenue_monthly_total_amount) as max_total_rev_monthly
+from ny_taxi.prod.fct_monthly_zone_revenue
+where service_type = 'Green' and EXTRACT ("year" from revenue_month) = 2020
+group by 1
+order by 2 desc 
 
+```
 ---
 
 ### Question 5. Green Taxi Trip Counts (October 2019)
@@ -95,7 +113,17 @@ Using the `fct_monthly_zone_revenue` table, what is the **total number of trips*
 - 350,891
 - 384,624
 - 421,509
-
+  
+Answer
+```sql
+-- total number of trips from 'total_monthly_trips' column
+select
+datetrunc('month', revenue_month) as revenue_month_trunc,
+SUM(total_monthly_trips) as total_trips
+from ny_taxi.prod.fct_monthly_zone_revenue
+where service_type = 'Green' and date_trunc ('month', revenue_month) = '2019-10-01'
+group by 1
+```
 ---
 
 ### Question 6. Build a Staging Model for FHV Data
