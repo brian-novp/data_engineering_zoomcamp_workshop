@@ -33,7 +33,8 @@ If you run `dbt run --select int_trips_unioned`, what models will be built?
 - Any model with upstream and downstream dependencies to `int_trips_unioned`
 - `int_trips_unioned` only
 - `int_trips_unioned`, `int_trips`, and `fct_trips` (downstream dependencies)
-  
+
+
 Answer : using --select flag/arg (or -s) without "+" (plus) sign (dbt calls them [graph operator](https://docs.getdbt.com/reference/node-selection/graph-operators)) in before or after the mentioned model, `dbt run` will only execute the mentioned model, no upstream nor downstream dependencies executed. 
 ---
 
@@ -58,7 +59,8 @@ What happens when you run `dbt test --select fct_trips`?
 - dbt will skip the test because the model didn't change
 - dbt will fail the test, returning a non-zero exit code
 - dbt will pass the test with a warning about the new value
-- dbt will update the configuration to include the new value  
+- dbt will update the configuration to include the new value
+
 
 Answer : It will fail the test. See [data test docs](https://docs.getdbt.com/docs/build/data-tests). Might want to try `--store-failure` flag for future development.
 ---
