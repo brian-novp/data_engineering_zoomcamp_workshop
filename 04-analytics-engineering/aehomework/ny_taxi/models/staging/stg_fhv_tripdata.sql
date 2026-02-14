@@ -1,5 +1,11 @@
+{{
+  config(
+    materialized = "table"
+  )
+}}
+
 with source as (
-    select * from {{ source('fhv', 'fhv_tripdata')}}
+    select * from {{ source('fhv', 'fhv_trip_data')}}
 ),
 
 cleaned as (
