@@ -1,36 +1,153 @@
-# dbt-duckdb local development preparation steps
+# Module 4 Homework: Analytics Engineering with dbt
 
-1. `python3 -m venv .venv` , activate venv
-2. pip install dbt-duckdb (to install dbt core and duckdb adapter/plugin)
-3. verify `dbt --version` (it displays the dbt core version and installed plugin or adapters along with its version. In this case duckdb plugin)
-4. go to the work dir of the project and execute `dbt init <name of the project>`. enter the adapter needed (choose duckdb). if we installed more than 1 adapter. Otherwise, it knows. This initiates the necessary folder structure. It also creates a hidden folder (`.dbt`) inside user system folder and `profiles.yml` in it. `/home/bri` in WSL2. `profiles.yml` tells how dbt works with the adapter, like setting the --dev or --prod environment, how many threads/memory to use, etc. 
-5. `code ~/.dbt/profiles.yml` to open yml file in vscode without clicking the file.
-6. Inspect available core or threads allocated in WSL2 by executing `lscpu` or `nproc`. Write down the spec.
-7. Update profiles.yml by copy paste from [local setup](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/04-analytics-engineering/setup/local_setup.md) , change memory limit to 4GB and threads to 4, for dev and prod
-8. cd to your newly created dbt project folder
-9. Download and ingest data using [python script](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/04-analytics-engineering/setup/local_setup.md#step-4-download-and-ingest-data) (just copy paste them)
-10. run the python script using virtual environment python interpreter (big data size for wsl2 standard, make sure unused docker images pruned and vhdx compacted using diskpart)
-11. add parquet and duckdb files inside .gitignore so if we push to remote repo, we do not push the big data
-12. open new terminal (no venv activated)
-13. Install duckdb in terminal `curl https://install.duckdb.org | sh` so wsl2 can initialize duckdb cli.
-14. go back to virtual env terminal, execute `duckdb -ui` to deploy duckdb ui locally, open in browser, copy the path of .duckdb file
-15. Under 'Attached databases', click the + sign, paste the copied path under 'Path' (we can do this from the cli). Write ny-taxi under 'Alias'
-16. Open new notebook and query the data (prod schema will be shown instead of dev because python script defined it as prod). If the data displayed correctly, then the local setup is done.
-17. Close the duckdb instance to avoid conflicts by keyboard interrupt ctrl+D
-18. Test the connection. go to dbt project (created by dbt init), run `dbt debug` in the terminal to test connection to duckdb. We expect 'All checks passed!'
-19. Install dbt power user extension in vscode to make it easier operating dbt locally
-20. Change python interpreter to the venv by copying the python path from `dbt debug` , not doing this will result in dbt power user extension asking to instal dbt core
+In this homework, we'll use the dbt project in `04-analytics-engineering/taxi_rides_ny/` to transform NYC taxi data and answer questions by querying the models.
+
+## Setup
+
+1. Set up your dbt project following the [setup guide](../../../04-analytics-engineering/setup/)
+2. Load the Green and Yellow taxi data for 2019-2020 into your warehouse
+3. Run `dbt build --target prod` to create all models and run tests
+
+> **Note:** By default, dbt uses the `dev` target. You must use `--target prod` to build the models in the production dataset, which is required for the homework queries below.
+
+After a successful build, you should have models like `fct_trips`, `dim_zones`, and `fct_monthly_zone_revenue` in your warehouse.
+
+---
+
+### Question 1. dbt Lineage and Execution
+
+Given a dbt project with the following structure:
+
+```
+models/
+├── staging/
+│   ├── stg_green_tripdata.sql
+│   └── stg_yellow_tripdata.sql
+└── intermediate/
+    └── int_trips_unioned.sql (depends on stg_green_tripdata & stg_yellow_tripdata)
+```
+
+If you run `dbt run --select int_trips_unioned`, what models will be built?
+
+- `stg_green_tripdata`, `stg_yellow_tripdata`, and `int_trips_unioned` (upstream dependencies)
+- Any model with upstream and downstream dependencies to `int_trips_unioned`
+- `int_trips_unioned` only
+- `int_trips_unioned`, `int_trips`, and `fct_trips` (downstream dependencies)
 
 
-# dbt project preparation
-1. Create `staging` folder inside `models` , create `sources.yml` . Staging and sources.yml are dbt convention. 
-2. Create an sql file for each taxies (use file naming convention such as `stg_green_tripdata.sql` instead of just `green_tripdata.sql` to show that this sql file is used in staging)
-3. Create a `marts` folder, inside it create `reporting` folder
-4. In marts folder, create `dim_vendors.sql`, `dim_locations.sql`, `fct_trips.sql` . As the name convention suggest, there files are for dimension and fact tables.
-5. In `reporting` folder, create `monthly_revenue_per_locations.sql`
-6. Create an `intermediate` folder under `models` folder, this is where we union all taxies data into a single table
-7. Fix the `stg_yellow_tripdata.sql` , ehail fee and trip type column.
-8. In terminal, go to the root dbpt project folder and `dbt run`, we expect Completed Successully message.
-9. go to `seeds` folder and download taxi zone lookup csv from module asset using the raw github link in the terminal `curl -O [raw asset github link]`
-10. in the root dbt project folder, `dbt seed`, we expect Completed Successfully message.
-11. go to `dim_locations.sql`, change to `dim_zones.sql`, write the sql that ref the csv inside seeds folder
+Answer : using --select flag/arg (or -s) without "+" (plus) sign (dbt calls them [graph operator](https://docs.getdbt.com/reference/node-selection/graph-operators)) in before or after the mentioned model, `dbt run` will only execute the mentioned model, no upstream nor downstream dependencies executed. 
+---
+
+### Question 2. dbt Tests
+
+You've configured a generic test like this in your `schema.yml`:
+
+```yaml
+columns:
+  - name: payment_type
+    data_tests:
+      - accepted_values:
+          arguments:
+            values: [1, 2, 3, 4, 5]
+            quote: false
+```  
+
+Your model `fct_trips` has been running successfully for months. A new value `6` now appears in the source data.
+
+What happens when you run `dbt test --select fct_trips`?
+
+- dbt will skip the test because the model didn't change
+- dbt will fail the test, returning a non-zero exit code
+- dbt will pass the test with a warning about the new value
+- dbt will update the configuration to include the new value
+
+
+Answer : It will fail the test. See [data test docs](https://docs.getdbt.com/docs/build/data-tests). Might want to try `--store-failure` flag for future development.
+---
+
+### Question 3. Counting Records in `fct_monthly_zone_revenue`
+
+After running your dbt project, query the `fct_monthly_zone_revenue` model.
+
+What is the count of records in the `fct_monthly_zone_revenue` model?
+
+- 12,998
+- 14,120
+- 12,184
+- 15,421  
+  
+Answer :
+```sql
+select count(*) as total_rows 
+from ny_taxi.prod.fct_monthly_zone_revenue
+```
+---
+
+### Question 4. Best Performing Zone for Green Taxis (2020)
+
+Using the `fct_monthly_zone_revenue` table, find the pickup zone with the **highest total revenue** (`revenue_monthly_total_amount`) for **Green** taxi trips in 2020.
+
+Which zone had the highest revenue?
+
+- East Harlem North
+- Morningside Heights
+- East Harlem South
+- Washington Heights South
+  
+Answer:
+```sql
+select
+pickup_zone,
+max(revenue_monthly_total_amount) as max_total_rev_monthly
+from ny_taxi.prod.fct_monthly_zone_revenue
+where service_type = 'Green' and EXTRACT ("year" from revenue_month) = 2020
+group by 1
+order by 2 desc 
+
+```
+---
+
+### Question 5. Green Taxi Trip Counts (October 2019)
+
+Using the `fct_monthly_zone_revenue` table, what is the **total number of trips** (`total_monthly_trips`) for Green taxis in October 2019?
+
+- 500,234
+- 350,891
+- 384,624
+- 421,509
+  
+Answer
+```sql
+-- total number of trips from 'total_monthly_trips' column
+select
+datetrunc('month', revenue_month) as revenue_month_trunc,
+SUM(total_monthly_trips) as total_trips
+from ny_taxi.prod.fct_monthly_zone_revenue
+where service_type = 'Green' and date_trunc ('month', revenue_month) = '2019-10-01'
+group by 1
+```
+---
+
+### Question 6. Build a Staging Model for FHV Data
+
+Create a staging model for the **For-Hire Vehicle (FHV)** trip data for 2019.
+
+1. Load the [FHV trip data for 2019](https://github.com/DataTalksClub/nyc-tlc-data/releases/tag/fhv) into your data warehouse
+2. Create a staging model `stg_fhv_tripdata` with these requirements:
+   - Filter out records where `dispatching_base_num IS NULL`
+   - Rename fields to match your project's naming conventions (e.g., `PUlocationID` → `pickup_location_id`)
+
+What is the count of records in `stg_fhv_tripdata`?
+
+- 42,084,899
+- 43,244,693
+- 22,998,722
+- 44,112,187
+
+
+Answer: Build the staging model first (see `stg_fhv_tripdata.sql`). If using the same `profiles.yml` , change the path to the duckdb file. Add config jinja in it. Run `dbt build --select stg_fhv_tripdata` and query in duckdb  
+```sql
+select count(*) as total_records
+from fhv.prod.stg_fhv_tripdata
+```
+---
