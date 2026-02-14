@@ -5,16 +5,17 @@
 }}
 
 with source as (
-    select * from {{ source('fhv', 'fhv_trip_data')}}
+    select * from {{ source('fhv', 'fhv_tripdata')}}
 ),
 
 cleaned as (
     select
         -- identifiers
-        cast(dispatching_base_num as string),
+        try_cast(dispatching_base_num as string) as dispatching_base_num,
+        try_cast(Affiliated_base_number as string) as affiliated_base_number,
         cast(PUlocationID as integer) as pickup_location_id,
         cast(DOlocationID as integer) as dropoff_location_id,
-        try_cast(Affiliated_base_number as string) as affiliated_base_number,
+        
 
         -- timestamps
         cast(pickup_datetime as timestamp) as pickup_datetime,

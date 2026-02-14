@@ -6,7 +6,7 @@ sources :
     database: fhv_rides_ny
     schema: prod
     tables:
-      - name: fhv_trip_data
+      - name: fhv_tripdata
         description: raw fhv rides nyc for 2019
         loaded_at_field: pickup_datetime
         columns:
