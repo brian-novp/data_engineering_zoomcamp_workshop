@@ -12,6 +12,9 @@ In this homework, we'll use the dbt project in `04-analytics-engineering/taxi_ri
 
 After a successful build, you should have models like `fct_trips`, `dim_zones`, and `fct_monthly_zone_revenue` in your warehouse.
 
+
+![alt text](image.png)
+
 ---
 
 ### Question 1. dbt Lineage and Execution
