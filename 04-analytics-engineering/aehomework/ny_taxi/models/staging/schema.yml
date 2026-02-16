@@ -92,6 +92,7 @@ models:
       Staging model for yellow taxi trip data. This model standardizes column names
       and data types from the raw yellow_tripdata source, providing a clean foundation
       for downstream transformations.
+
     columns:
       - name: vendor_id
         description: Taxi technology provider (1 = Creative Mobile Technologies, 2 = VeriFone Inc.)

@@ -31,7 +31,13 @@ models:
   taxi_rides_ny:
     staging:
       +materialized: view
+      +docs:
+        node_color: "#6A2E1D"
     intermediate:
       +materialized: table
+      +docs:
+        node_color: "#A8A9AB"
     marts:
       +materialized: table
+      +docs:
+        node_color: "#B8860B"
