@@ -37,6 +37,7 @@ You're building a pipeline that processes NYC taxi data organized by month based
 
 
 Answer : [Bruin materialization](https://getbruin.com/docs/bruin/assets/materialization.html#time-interval)
+
 ---
 
 ### Question 3. Pipeline Variables
@@ -61,6 +62,7 @@ How do you override this when running the pipeline to only process yellow taxis?
 
 
 Answer: [Bruin override variable at runtime](https://getbruin.com/docs/bruin/core-concepts/variables.html#overriding-variables-at-runtime)
+
 ---
 
 ### Question 4. Running with Dependencies
@@ -74,6 +76,7 @@ You've modified the `ingestion/trips.py` asset and want to run it plus all downs
 
 
 Answer : [Bruin run](https://getbruin.com/docs/bruin/commands/run.html)
+
 ---
 
 ### Question 5. Quality Checks
@@ -87,6 +90,7 @@ You want to ensure the `pickup_datetime` column in your trips table never has NU
 
 
 Answer : [Quality Check](https://getbruin.com/docs/bruin/quality/available_checks.html)
+
 ---
 
 ### Question 6. Lineage and Dependencies
@@ -100,6 +104,7 @@ After building your pipeline, you want to visualize the dependency graph between
 
 
 Answer : [Bruin commands](https://getbruin.com/docs/bruin/commands/overview.html)
+
 ---
 
 ### Question 7. First-Time Run
@@ -113,4 +118,5 @@ You're running a Bruin pipeline for the first time on a new DuckDB database. Wha
 
 
 Answer : [Bruin run flags](https://getbruin.com/docs/bruin/commands/run.html)
+
 ---
