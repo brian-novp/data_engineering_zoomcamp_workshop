@@ -91,7 +91,7 @@ trips_by_month AS ( -- Step 1: Extract month from pickup_time and prepare data f
     total_amount,
     tip_amount,
     extracted_at,
-  FROM staging.trips_summary
+  FROM staging.trips
   WHERE 1=1
     AND DATE_TRUNC('month', pickup_time) BETWEEN DATE_TRUNC('month', CAST('{{ start_datetime }}' AS TIMESTAMP)) AND DATE_TRUNC('month', CAST('{{ end_datetime }}' AS TIMESTAMP))
     AND trip_duration_seconds IS NOT NULL
