@@ -22,8 +22,10 @@ In a Bruin project, what are the required files/directories?
 - `.bruin.yml` and `pipeline/` with `pipeline.yml` and `assets/`
 - `pipeline.yml` and `assets/` only
 
----
 
+Answer : It is best practice to include all assets under `assets/` folder. In it we can separate each 'work' in subfolders. Don't forget to always name the asset file in `<filename.asset.yml>`
+---
+  
 ### Question 2. Materialization Strategies
 
 You're building a pipeline that processes NYC taxi data organized by month based on `pickup_datetime`. Which incremental strategy is best for processing a specific interval period by deleting and inserting data for that time period?
@@ -33,6 +35,8 @@ You're building a pipeline that processes NYC taxi data organized by month based
 - `time_interval` - incremental based on a time column
 - `view` - create a virtual table only
 
+
+Answer : [Bruin materialization](https://getbruin.com/docs/bruin/assets/materialization.html#time-interval)
 ---
 
 ### Question 3. Pipeline Variables
@@ -55,6 +59,8 @@ How do you override this when running the pipeline to only process yellow taxis?
 - `bruin run --var 'taxi_types=["yellow"]'`
 - `bruin run --set taxi_types=["yellow"]`
 
+
+Answer: [Bruin override variable at runtime](https://getbruin.com/docs/bruin/core-concepts/variables.html#overriding-variables-at-runtime)
 ---
 
 ### Question 4. Running with Dependencies
@@ -66,6 +72,8 @@ You've modified the `ingestion/trips.py` asset and want to run it plus all downs
 - `bruin run pipeline/trips.py --recursive`
 - `bruin run --select ingestion.trips+`
 
+
+Answer : [Bruin run](https://getbruin.com/docs/bruin/commands/run.html)
 ---
 
 ### Question 5. Quality Checks
@@ -77,6 +85,8 @@ You want to ensure the `pickup_datetime` column in your trips table never has NU
 - `name: positive`
 - `name: accepted_values, value: [not_null]`
 
+
+Answer : [Quality Check](https://getbruin.com/docs/bruin/quality/available_checks.html)
 ---
 
 ### Question 6. Lineage and Dependencies
@@ -88,6 +98,8 @@ After building your pipeline, you want to visualize the dependency graph between
 - `bruin lineage`
 - `bruin show`
 
+
+Answer : [Bruin commands](https://getbruin.com/docs/bruin/commands/overview.html)
 ---
 
 ### Question 7. First-Time Run
@@ -99,4 +111,6 @@ You're running a Bruin pipeline for the first time on a new DuckDB database. Wha
 - `--full-refresh`
 - `--truncate`
 
+
+Answer : [Bruin run flags](https://getbruin.com/docs/bruin/commands/run.html)
 ---
