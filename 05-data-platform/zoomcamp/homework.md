@@ -20,9 +20,7 @@ In a Bruin project, what are the required files/directories?
 - `bruin.yml` and `assets/`
 - `.bruin.yml` and `pipeline.yml` (assets can be anywhere)
 - `.bruin.yml` and `pipeline/` with `pipeline.yml` and `assets/`
-- `pipeline.yml` and `assets/` only
-
-
+- `pipeline.yml` and `assets/` only  
 Answer : It is best practice to include all assets under `assets/` folder. In it we can separate each 'work' in subfolders. Don't forget to always name the asset file in `<filename.asset.yml>`
 ---
   
