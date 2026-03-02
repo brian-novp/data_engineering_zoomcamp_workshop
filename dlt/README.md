@@ -190,7 +190,7 @@ FROM trip_stats
 ```sql
 SELECT SUM(tip_amt) as total_tips
 FROM taxi_dataset.taxi_trip;
-
+```
 ### Resources
 
 | Resource | Link |
