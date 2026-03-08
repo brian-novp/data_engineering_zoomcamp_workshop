@@ -67,15 +67,17 @@ Consider only trips that started on the 15th of November.
 
 Answer:
 ```python
-# Register as temp view so we can use SQL
+
 df.createOrReplaceTempView("yellow_taxi")
 
 # Using Spark SQL
-count_sql = spark.sql("""
+trip15nov = spark.sql("""
     SELECT COUNT(*) AS trip_count
     FROM yellow_taxi
     WHERE DATE(tpep_pickup_datetime) = '2025-11-15'
 """).head()
+
+print(trip15nov)
 
 ```
 
@@ -90,7 +92,7 @@ What is the length of the longest trip in the dataset in hours?
 
 Answer:
 ```python
-
+from pyspark.sql import functions as F
 
 df_dur = df.withColumn(
     "trip_duration",
