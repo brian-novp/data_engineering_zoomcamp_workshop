@@ -43,3 +43,8 @@ Thumbs.db
 *.ddb*
 
 .bruin.yml
+
+# batch module
+*.crc
+_SUCCESS
+pyspark.ipynb
